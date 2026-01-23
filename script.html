@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Chime – Member Services Script</title>
+
+<style>
+  :root {
+    --primary: #00d66f;
+    --primary-dark: #00b35c;
+    --primary-light: #e6faf2;
+    --bg: #f7f9fa;
+    --card-bg: #ffffff;
+    --text-main: #21283b;
+    --text-muted: #6b7280;
+    --radius: 12px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.06);
+    --danger: #ef4444;
+    --danger-light: #fee2e2;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--text-main);
+    padding: 20px 16px;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: auto;
+  }
+
+  .header {
+    background: var(--primary);
+    color: var(--text-main);
+    padding: 18px 24px;
+    border-radius: var(--radius);
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  /* -------------------- TABS --------------------- */
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    border-bottom: 2px solid #e5e7eb;
+    margin-bottom: 20px;
+  }
+
+  .tab {
+    padding: 12px 16px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-bottom: 3px solid transparent;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+  }
+
+  .tab.active {
+    color: var(--primary-dark);
+    border-bottom: 3px solid var(--primary);
+  }
+
+  /* ------------------- CARDS -------------------- */
+  .card {
+    background: var(--card-bg);
+    padding: 24px;
+    margin-bottom: 20px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+
+  h3 {
+    margin-top: 0;
+    color: var(--primary-dark);
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 18px;
+  }
+
+  label {
+    display: block;
+    font-size: 0.8rem;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  input, select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e5e7eb;
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+    font-family: inherit;
+  }
+
+  input:focus, select:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+  }
+
+  @media (max-width: 768px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+
+  /* ---------------- CHECKBOXES ------------------ */
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    font-size: 0.95rem;
+  }
+
+  .check-item input {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    cursor: pointer;
+  }
+
+  /* ---------------- ACTION BUTTONS -------------- */
+  .actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .btn {
+    padding: 14px 20px;
+    border-radius: var(--radius);
+    border: none;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-primary { 
+    background: var(--primary); 
+    color: var(--text-main);
+  }
+  .btn-primary:hover { 
+    background: var(--primary-dark);
+  }
+
+  .btn-danger { 
+    background: var(--danger); 
+    color: #fff;
+  }
+  .btn-danger:hover { 
+    background: #dc2626;
+  }
+
+  /* ---------------- SUPERVISOR ACTION CARD -------------- */
+  .supervisor-card {
+    background: var(--danger-light);
+    border-left: 4px solid var(--danger);
+    padding: 16px;
+    margin-top: 10px;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    display: none;
+  }
+
+  .supervisor-option {
+    padding: 8px 0;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .supervisor-option:hover {
+    text-decoration: underline;
+  }
+
+  /* ---------------- TIMELINE -------------------- */
+  .timeline {
+    border-left: 3px solid var(--primary);
+    padding-left: 18px;
+  }
+  
+  .event { 
+    margin-bottom: 18px;
+  }
+  
+  .event .date { 
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+  }
+  
+  .event .type {
+    font-size: 0.75rem;
+    background: var(--primary-light);
+    padding: 4px 10px;
+    border-radius: 999px;
+    display: inline-block;
+    margin: 4px 0;
+    font-weight: 600;
+    color: var(--primary-dark);
+  }
+  
+  .event .summary { 
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+
+  /* ---------------- ACCOUNT DETAILS TABLE -------------------- */
+  .details-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .details-table tr {
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .details-table td {
+    padding: 12px 8px;
+    font-size: 0.9rem;
+  }
+
+  .details-table td:first-child {
+    font-weight: 600;
+    color: var(--text-muted);
+    width: 40%;
+  }
+
+  /* ---------------- TOASTS -------------------- */
+  .toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 3000;
+  }
+
+  .toast {
+    background: var(--primary);
+    color: var(--text-main);
+    padding: 14px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0,214,111,0.3);
+    margin-bottom: 10px;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* -------------- TAB CONTENT ------------------- */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ---------------- BALANCE DISPLAY -------------------- */
+  .balance-display {
+    background: var(--primary-light);
+    padding: 20px;
+    border-radius: var(--radius);
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .balance-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .balance-amount {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin: 8px 0;
+  }
+
+</style>
+</head>
+
+<body>
+
+<!-- TOASTS -->
+<div class="toast-container" id="toastContainer"></div>
+
+<div class="container">
+
+  <div class="header">Chime – Member Services Script</div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="member">Member Info</div>
+    <div class="tab" data-tab="workflow">Workflow</div>
+    <div class="tab" data-tab="account">Account Details</div>
+    <div class="tab" data-tab="history">Contact History</div>
+    <div class="tab" data-tab="verification">Identity Verification</div>
+  </div>
+
+  <!-- ---------------- TAB: MEMBER INFO ---------------- -->
+  <div id="member" class="tab-content active">
+    <div class="card">
+      <h3>Member Information</h3>
+
+      <div class="grid-2">
+        <div><label>First Name</label><input id="firstName" readonly></div>
+        <div><label>Last Name</label><input id="lastName" readonly></div>
+
+        <div><label>Date of Birth</label><input id="dob" readonly></div>
+        <div><label>Member ID</label><input id="memberId" readonly></div>
+
+        <div><label>Phone Number</label><input id="phone" readonly></div>
+        <div><label>Email Address</label><input id="email" readonly></div>
+      </div>
+
+      <label>Street Address</label>
+      <input id="address" readonly>
+
+      <div class="grid-3">
+        <div><label>City</label><input id="city" readonly></div>
+        <div><label>State</label><input id="state" readonly></div>
+        <div><label>ZIP Code</label><input id="zip" readonly></div>
+      </div>
+
+      <div class="grid-2">
+        <div><label>SSN (Last 4)</label><input id="ssn" readonly></div>
+        <div><label>Account Status</label><input id="accountStatus" readonly></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------------- TAB: WORKFLOW ---------------- -->
+  <div id="workflow" class="tab-content">
+    <div class="card">
+      <h3>Member Service Workflow</h3>
+
+      <div class="check-item"><input type="checkbox">Verify member identity (DOB + Last 4 SSN)</div>
+      <div class="check-item"><input type="checkbox">Confirm contact information is current</div>
+      <div class="check-item"><input type="checkbox">Review account status and recent activity</div>
+      <div class="check-item"><input type="checkbox">Address member's primary concern or question</div>
+      <div class="check-item"><input type="checkbox">Provide relevant account information or resources</div>
+      <div class="check-item"><input type="checkbox">Document interaction notes in CRM</div>
+      <div class="check-item"><input type="checkbox">Offer additional assistance before closing</div>
+
+      <div class="actions">
+        <button class="btn btn-danger" onclick="toggleSupervisorCard()">Escalate to Supervisor</button>
+
+        <div id="supervisorCard" class="supervisor-card">
+          <div class="supervisor-option">Notify Supervisor Immediately</div>
+          <div class="supervisor-option">Request Live Call Monitoring</div>
+          <div class="supervisor-option">Flag for Quality Review</div>
+          <div class="supervisor-option">Transfer to Supervisor Queue</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------------- TAB: ACCOUNT DETAILS ---------------- -->
+  <div id="account" class="tab-content">
+    <div class="card">
+      <h3>Account Overview</h3>
+
+      <div class="balance-display">
+        <div class="balance-label">Current Balance</div>
+        <div class="balance-amount" id="balanceAmount">$0.00</div>
+        <div class="balance-label">Spending Account</div>
+      </div>
+
+      <table class="details-table">
+        <tr><td>Account Type:</td><td id="accountType">Spending Account</td></tr>
+        <tr><td>Account Number:</td><td id="accountNumber">****1234</td></tr>
+        <tr><td>Routing Number:</td><td>103100195</td></tr>
+        <tr><td>Member Since:</td><td id="memberSince">January 2022</td></tr>
+        <tr><td>Direct Deposit:</td><td id="directDeposit">Active</td></tr>
+        <tr><td>Debit Card Status:</td><td id="cardStatus">Active</td></tr>
+        <tr><td>SpotMe® Enabled:</td><td id="spotme">Yes - $20 limit</td></tr>
+        <tr><td>Credit Builder:</td><td id="creditBuilder">Not Enrolled</td></tr>
+      </table>
+
+      <div class="actions">
+        <button class="btn btn-primary" onclick="showToast('Account details refreshed')">Refresh Account Data</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------------- TAB: CONTACT HISTORY ---------------- -->
+  <div id="history" class="tab-content">
+    <div class="card">
+      <h3>Contact History</h3>
+
+      <div class="timeline">
+        <div class="event">
+          <div class="date">Jan 20, 2026</div>
+          <div class="type">Chat</div>
+          <div class="summary">Question about direct deposit timing. Resolved.</div>
+        </div>
+        <div class="event">
+          <div class="date">Jan 15, 2026</div>
+          <div class="type">Inbound Call</div>
+          <div class="summary">Reported lost debit card. Replacement ordered.</div>
+        </div>
+        <div class="event">
+          <div class="date">Jan 10, 2026</div>
+          <div class="type">Email</div>
+          <div class="summary">Monthly statement delivered.</div>
+        </div>
+        <div class="event">
+          <div class="date">Jan 5, 2026</div>
+          <div class="type">Push Notification</div>
+          <div class="summary">SpotMe® used - $12.50 covered.</div>
+        </div>
+        <div class="event">
+          <div class="date">Dec 28, 2025</div>
+          <div class="type">Inbound Call</div>
+          <div class="summary">Updated mailing address.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------------- TAB: IDENTITY VERIFICATION ---------------- -->
+  <div id="verification" class="tab-content">
+    <div class="card">
+      <h3>Identity Verification</h3>
+
+      <div class="check-item"><input type="checkbox" id="verifyDOB">Date of Birth verified</div>
+      <div class="check-item"><input type="checkbox" id="verifySSN">Last 4 of SSN verified</div>
+      <div class="check-item"><input type="checkbox" id="verifyAddress">Current address confirmed</div>
+      <div class="check-item"><input type="checkbox" id="verifyPhone">Phone number confirmed</div>
+
+      <div style="margin-top: 24px; padding: 16px; background: var(--primary-light); border-radius: var(--radius);">
+        <strong style="color: var(--primary-dark);">Security Questions (if needed):</strong>
+        <div style="margin-top: 12px; color: var(--text-muted);">
+          <div style="margin: 8px 0;">• Recent transaction amount or merchant</div>
+          <div style="margin: 8px 0;">• Direct deposit employer name</div>
+          <div style="margin: 8px 0;">• Approximate account balance</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" onclick="verificationComplete()">Complete Verification</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ------------------------ SCRIPT ------------------------- -->
+<script>
+  /* ----- Tabs ----- */
+  const tabs = document.querySelectorAll(".tab");
+  const contents = document.querySelectorAll(".tab-content");
+
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      tabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+
+      contents.forEach(c => c.classList.remove("active"));
+      document.getElementById(tab.dataset.tab).classList.add("active");
+    });
+  });
+
+  /* ----- Query Params ----- */
+  const qp = new URLSearchParams(window.location.search);
+
+  function getQP(...keys) {
+    for (let k of keys) {
+      const v = qp.get(k);
+      if (v && v.trim() !== "") return v;
+    }
+    return "";
+  }
+
+  function cleanPhone(input="") {
+    return input.replace(/[\[\]\(\)]/g,"").trim();
+  }
+
+  /* ----- Defaults ----- */
+  const defaults = {
+    firstName: "Jordan",
+    lastName: "Martinez",
+    dob: "1992-03-15",
+    memberId: "CHM-8472951",
+    phone: "(555) 234-8901",
+    email: "jordan.martinez@email.com",
+    address: "742 Evergreen Terrace",
+    city: "San Francisco",
+    state: "CA",
+    zip: "94102",
+    ssn: "****6789",
+    accountStatus: "Active - Good Standing",
+    balance: "1,247.63",
+    accountType: "Spending Account",
+    accountNumber: "****1234",
+    memberSince: "January 2022",
+    directDeposit: "Active",
+    cardStatus: "Active",
+    spotme: "Yes - $20 limit",
+    creditBuilder: "Not Enrolled"
+  };
+
+  function setField(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.value = val;
+  }
+
+  function setText(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.innerText = val;
+  }
+
+  /* ----- Field Mapping ----- */
+  setField("firstName", getQP("firstName", "fname", "first") || defaults.firstName);
+  setField("lastName", getQP("lastName", "lname", "last") || defaults.lastName);
+  setField("dob", getQP("dob", "DOB", "birthDate") || defaults.dob);
+  setField("memberId", getQP("memberId", "memberID", "accountId") || defaults.memberId);
+  setField("phone", cleanPhone(getQP("phone", "phoneNumber", "mobile")) || defaults.phone);
+  setField("email", getQP("email", "emailAddress") || defaults.email);
+  setField("address", getQP("address", "street", "address1") || defaults.address);
+  setField("city", getQP("city") || defaults.city);
+  setField("state", getQP("state") || defaults.state);
+  setField("zip", getQP("zip", "zipCode", "postalCode") || defaults.zip);
+  setField("ssn", getQP("ssn", "last4") || defaults.ssn);
+  setField("accountStatus", getQP("status", "accountStatus") || defaults.accountStatus);
+
+  /* Account Details */
+  setText("accountType", getQP("accountType") || defaults.accountType);
+  setText("accountNumber", getQP("accountNumber") || defaults.accountNumber);
+  setText("memberSince", getQP("memberSince") || defaults.memberSince);
+  setText("directDeposit", getQP("directDeposit") || defaults.directDeposit);
+  setText("cardStatus", getQP("cardStatus") || defaults.cardStatus);
+  setText("spotme", getQP("spotme") || defaults.spotme);
+  setText("creditBuilder", getQP("creditBuilder") || defaults.creditBuilder);
+
+  /* Balance */
+  const balance = getQP("balance") || defaults.balance;
+  setText("balanceAmount", "$" + balance);
+
+  /* ----- Supervisor Action Card Toggle ----- */
+  function toggleSupervisorCard() {
+    const card = document.getElementById("supervisorCard");
+    card.style.display = (card.style.display === "block") ? "none" : "block";
+  }
+  window.toggleSupervisorCard = toggleSupervisorCard;
+
+  /* ----- Toast System ----- */
+  function showToast(text) {
+    const container = document.getElementById("toastContainer");
+
+    const toast = document.createElement("div");
+    toast.className = "toast";
+    toast.innerText = text + " ✓";
+
+    container.appendChild(toast);
+
+    setTimeout(() => toast.classList.add("show"), 10);
+    setTimeout(() => {
+      toast.classList.remove("show");
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  }
+  window.showToast = showToast;
+
+  /* ----- Supervisor Option Clicks ----- */
+  document.querySelectorAll(".supervisor-option").forEach(option => {
+    option.addEventListener("click", () => {
+      const msg = option.innerText.trim();
+      document.getElementById("supervisorCard").style.display = "none";
+      showToast(msg);
+    });
+  });
+
+  /* ----- Verification Complete ----- */
+  function verificationComplete() {
+    const checks = ["verifyDOB", "verifySSN", "verifyAddress", "verifyPhone"];
+    const allChecked = checks.every(id => document.getElementById(id).checked);
+    
+    if (allChecked) {
+      showToast("Identity verification complete");
+    } else {
+      showToast("Please complete all verification steps");
+    }
+  }
+  window.verificationComplete = verificationComplete;
+
+  /* ----- Theme Overrides ----- */
+  const primaryColor = getQP("primaryColor", "brandColor");
+  const bgColor = getQP("bgColor", "backgroundColor");
+  const headerColor = getQP("headerColor");
+
+  if (bgColor) document.body.style.backgroundColor = bgColor;
+  if (headerColor) document.querySelector(".header").style.backgroundColor = headerColor;
+  if (primaryColor) {
+    document.documentElement.style.setProperty('--primary', primaryColor);
+  }
+</script>
+
+</body>
+</html>
