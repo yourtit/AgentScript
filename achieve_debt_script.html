@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Achieve – Debt Relief Service Script</title>
+
+<style>
+  :root {
+    --primary: #00a9e0;
+    --primary-dark: #0088b8;
+    --primary-light: #e6f7fc;
+    --secondary: #6cc24a;
+    --bg: #f5f7fa;
+    --card-bg: #ffffff;
+    --text-main: #1a2332;
+    --text-muted: #5f6c7b;
+    --radius: 10px;
+    --shadow: 0 2px 10px rgba(0,0,0,0.08);
+    --danger: #e74c3c;
+    --danger-light: #fdecea;
+    --success: #6cc24a;
+    --success-light: #e8f5e1;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    font-family: "Segoe UI", "Open Sans", -apple-system, sans-serif;
+    color: var(--text-main);
+    padding: 20px 16px;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: auto;
+  }
+
+  .header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: #fff;
+    padding: 20px 28px;
+    border-radius: var(--radius);
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 24px;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+
+  /* -------------------- TABS --------------------- */
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    border-bottom: 2px solid #dce1e6;
+    margin-bottom: 20px;
+  }
+
+  .tab {
+    padding: 12px 18px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-bottom: 3px solid transparent;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+  }
+
+  .tab.active {
+    color: var(--primary);
+    border-bottom: 3px solid var(--primary);
+  }
+
+  /* ------------------- CARDS -------------------- */
+  .card {
+    background: var(--card-bg);
+    padding: 24px;
+    margin-bottom: 20px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+
+  h3 {
+    margin-top: 0;
+    color: var(--primary-dark);
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 18px;
+  }
+
+  label {
+    display: block;
+    font-size: 0.8rem;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e4e8;
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+    font-family: inherit;
+  }
+
+  textarea {
+    min-height: 80px;
+    resize: vertical;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+
+  input[readonly] {
+    background: #f8f9fa;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+  }
+
+  @media (max-width: 768px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+
+  /* ---------------- CHECKBOXES ------------------ */
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    font-size: 0.95rem;
+  }
+
+  .check-item input {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    cursor: pointer;
+  }
+
+  /* ---------------- ACTION BUTTONS -------------- */
+  .actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .btn {
+    padding: 14px 20px;
+    border-radius: var(--radius);
+    border: none;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-primary { 
+    background: var(--primary); 
+    color: #fff;
+  }
+  .btn-primary:hover { 
+    background: var(--primary-dark);
+  }
+
+  .btn-success {
+    background: var(--success);
+    color: #fff;
+  }
+  .btn-success:hover {
+    background: #5aad3a;
+  }
+
+  .btn-danger { 
+    background: var(--danger); 
+    color: #fff;
+  }
+  .btn-danger:hover { 
+    background: #d43f2f;
+  }
+
+  /* ---------------- SUPERVISOR ACTION CARD -------------- */
+  .supervisor-card {
+    background: var(--danger-light);
+    border-left: 4px solid var(--danger);
+    padding: 16px;
+    margin-top: 10px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    display: none;
+  }
+
+  .supervisor-option {
+    padding: 8px 0;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .supervisor-option:hover {
+    text-decoration: underline;
+  }
+
+  /* ---------------- TIMELINE -------------------- */
+  .timeline {
+    border-left: 3px solid var(--primary);
+    padding-left: 18px;
+  }
+  
+  .event { 
+    margin-bottom: 18px;
+  }
+  
+  .event .date { 
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+  }
+  
+  .event .type {
+    font-size: 0.75rem;
+    background: var(--primary-light);
+    padding: 4px 10px;
+    border-radius: 999px;
+    display: inline-block;
+    margin: 4px 0;
+    font-weight: 600;
+    color: var(--primary-dark);
+  }
+  
+  .event .summary { 
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+
+  /* ---------------- ACCOUNT LIST TABLE -------------------- */
+  .account-list {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+  }
+
+  .account-list thead {
+    background: var(--primary-light);
+  }
+
+  .account-list th {
+    padding: 12px;
+    text-align: left;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  .account-list td {
+    padding: 12px;
+    border-bottom: 1px solid #e8ebed;
+    font-size: 0.9rem;
+  }
+
+  .account-list tr:hover {
+    background: #f8f9fa;
+  }
+
+  .status-badge {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+  }
+
+  .status-enrolled {
+    background: var(--success-light);
+    color: var(--success);
+  }
+
+  .status-settled {
+    background: var(--primary-light);
+    color: var(--primary);
+  }
+
+  .status-pending {
+    background: #fff3cd;
+    color: #856404;
+  }
+
+  /* ---------------- DETAILS TABLE -------------------- */
+  .details-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .details-table tr {
+    border-bottom: 1px solid #e8ebed;
+  }
+
+  .details-table td {
+    padding: 12px 8px;
+    font-size: 0.9rem;
+  }
+
+  .details-table td:first-child {
+    font-weight: 600;
+    color: var(--text-muted);
+    width: 45%;
+  }
+
+  /* ---------------- TOASTS -------------------- */
+  .toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 3000;
+  }
+
+  .toast {
+    background: var(--success);
+    color: #fff;
+    padding: 14px 20px;
+    border-radius: var(--radius);
+    box-shadow: 0 4px 16px rgba(108,194,74,0.3);
+    margin-bottom: 10px;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* -------------- TAB CONTENT ------------------- */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ---------------- PROGRAM SUMMARY -------------------- */
+  .program-summary {
+    background: var(--success-light);
+    padding: 20px;
+    border-radius: var(--radius);
+    border-left: 4px solid var(--success);
+    margin-bottom: 20px;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 0.95rem;
+  }
+
+  .summary-row strong {
+    color: var(--text-main);
+  }
+
+  .summary-divider {
+    border-top: 2px solid var(--success);
+    margin: 12px 0;
+  }
+
+</style>
+</head>
+
+<body>
+
+<!-- TOASTS -->
+<div class="toast-container" id="toastContainer"></div>
+
+<div class="container">
+
+  <div class="header">Achieve – Debt Relief Service Script</div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="member">Member Info</div>
+    <div class="tab" data-tab="accounts">Current Accounts</div>
+    <div class="tab" data-tab="program">Program Details</div>
+    <div class="tab" data-tab="workflow">Workflow</div>
+    <div class="tab" data-tab="history">Contact History</div>
+    <div class="tab" data-tab="verification">Identity Verification</div>
+  </div>
+
+  <!-- ---------------- TAB: MEMBER INFO ---------------- -->
+  <div id="member" class="tab-content active">
+    <div class="card">
+      <h3>Member Information</h3>
+
+      <div class="grid-2">
+        <div><label>First Name</label><input id="firstName" readonly></div>
+        <div><label>Last Name</label><input id="lastName" readonly></div>
+
+        <div><label>Date of Birth</label><input id="dob" readonly></div>
+        <div><label>Account Number</label><input id="accountNumber" readonly></div>
+
+        <div><label>Phone Number</label><input id="phone" readonly></div>
+        <div><label>Email Address</label><input id="email" readonly></div>
+      </div>
+
+      <label>Street Address</label>
+      <input id="address" readonly>
+
+      <div class="grid-3">
+        <div><label>City</label><input id="city" readonly></div>
+        <div><label>State</label><input id="state" readonly></div>
+        <div><label>ZIP Code</label><input id="zip" readonly></div>
+      </div>
+
+      <div class="grid-2">
+        <div><label>SSN (Last 4)</label><input id="ssn" readonly></div>
+        <div><label>Program Status</label><input id="programStatus" readonly></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------------- TAB: CURRENT ACCOUNTS ---------------- -->
+  <div id="accounts" class="tab-content">
+    <div class="card">
+      <h3>Current Credit Card Accounts</h3>
+
+      <table class="account-list">
+        <thead>
+          <tr>
+            <th>Creditor</th>
+            <th>Account Number</th>
+            <th>Balance</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Chase Visa</td>
+            <td>****4892</td>
+            <td>$8,247.32</td>
+            <td><span class="status-badge status-enrolled">Enrolled</span></td>
+          </tr>
+          <tr>
+            <td>Capital One Mastercard</td>
+            <td>****7156</td>
+            <td>$12,893.45</td>
+            <td><span class="status-badge status-enrolled">Enrolled</span></td>
+          </tr>
+          <tr>
+            <td>Citi Platinum</td>
+            <td>****2341</td>
+            <td>$5,614.88</td>
+            <td><span class="status-badge status-pending">Pending Settlement</span></td>
+          </tr>
+          <tr>
+            <td>Discover Card</td>
+            <td>****9823</td>
+            <td>$3,872.19</td>
+            <td><span class="status-badge status-enrolled">Enrolled</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top: 20px; padding: 16px; background: var(--primary-light); border-radius: var(--radius);">
+        <div style="display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: 700; color: var(--primary-dark);">
+          <span>Total Enrolled Debt:</span>
+          <span id="totalDebt">$30,627.84</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------------- TAB: PROGRAM DETAILS ---------------- -->
+  <div id="program" class="tab-content">
+    <div class="card">
+      <h3>Debt Relief Program Overview</h3>
+
+      <div class="program-summary">
+        <div class="summary-row">
+          <span>Total Enrolled Debt:</span>
+          <strong id="progEnrolledDebt">$30,627.84</strong>
+        </div>
+        <div class="summary-row">
+          <span>Monthly Program Deposit:</span>
+          <strong id="progMonthlyDeposit">$520.00</strong>
+        </div>
+        <div class="summary-row">
+          <span>Estimated Program Length:</span>
+          <strong id="progLength">36-48 months</strong>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-row">
+          <span>Estimated Total Cost (with fees):</span>
+          <strong id="progTotalCost">$21,438.48</strong>
+        </div>
+        <div class="summary-row" style="color: var(--success); font-size: 1.05rem;">
+          <span>Estimated Total Savings:</span>
+          <strong id="progSavings">$9,189.36 🎉</strong>
+        </div>
+      </div>
+
+      <table class="details-table">
+        <tr><td>Enrollment Date:</td><td id="enrollmentDate">October 15, 2025</td></tr>
+        <tr><td>Program Negotiator:</td><td id="negotiator">Sarah Martinez</td></tr>
+        <tr><td>Accounts Settled:</td><td id="accountsSettled">0 of 4</td></tr>
+        <tr><td>Next Deposit Due:</td><td id="nextDeposit">March 25, 2026</td></tr>
+        <tr><td>Dedicated Account Balance:</td><td id="dedicatedBalance">$2,600.00</td></tr>
+        <tr><td>Program Guarantee:</td><td>Active</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ---------------- TAB: WORKFLOW ---------------- -->
+  <div id="workflow" class="tab-content">
+    <div class="card">
+      <h3>Member Service Workflow</h3>
+
+      <div class="check-item"><input type="checkbox">Verify member identity (DOB + Last 4 SSN)</div>
+      <div class="check-item"><input type="checkbox">Confirm contact information is current</div>
+      <div class="check-item"><input type="checkbox">Review program status and progress</div>
+      <div class="check-item"><input type="checkbox">Address member's primary concern or question</div>
+      <div class="check-item"><input type="checkbox">Review upcoming deposit schedule</div>
+      <div class="check-item"><input type="checkbox">Provide program resources or updates</div>
+      <div class="check-item"><input type="checkbox">Document interaction in member notes</div>
+      <div class="check-item"><input type="checkbox">Confirm next steps and set expectations</div>
+
+      <div class="actions">
+        <button class="btn btn-danger" onclick="toggleSupervisorCard()">Escalate to Supervisor</button>
+
+        <div id="supervisorCard" class="supervisor-card">
+          <div class="supervisor-option">Notify Supervisor Immediately</div>
+          <div class="supervisor-option">Request Live Call Monitoring</div>
+          <div class="supervisor-option">Flag for Quality Review</div>
+          <div class="supervisor-option">Transfer to Debt Consultant</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Member Notes</h3>
+      <label>Add Notes</label>
+      <textarea id="memberNotes" placeholder="Document member interaction, concerns, or action items..."></textarea>
+      <button class="btn btn-primary" onclick="saveNotes()">Save Notes</button>
+    </div>
+  </div>
+
+  <!-- ---------------- TAB: CONTACT HISTORY ---------------- -->
+  <div id="history" class="tab-content">
+    <div class="card">
+      <h3>Contact History</h3>
+
+      <div class="timeline">
+        <div class="event">
+          <div class="date">March 10, 2026</div>
+          <div class="type">Inbound Call</div>
+          <div class="summary">Member inquired about settlement progress on Citi account. Explained negotiation timeline.</div>
+        </div>
+        <div class="event">
+          <div class="date">February 28, 2026</div>
+          <div class="type">Email</div>
+          <div class="summary">Sent monthly program update with deposit confirmation.</div>
+        </div>
+        <div class="event">
+          <div class="date">February 15, 2026</div>
+          <div class="type">Outbound Call</div>
+          <div class="summary">Settlement offer review for Capital One account - member approved.</div>
+        </div>
+        <div class="event">
+          <div class="date">January 30, 2026</div>
+          <div class="type">SMS</div>
+          <div class="summary">Deposit reminder sent for February payment.</div>
+        </div>
+        <div class="event">
+          <div class="date">January 12, 2026</div>
+          <div class="type">Inbound Call</div>
+          <div class="summary">Member requested budget review. Consultant provided financial guidance.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------------- TAB: IDENTITY VERIFICATION ---------------- -->
+  <div id="verification" class="tab-content">
+    <div class="card">
+      <h3>Identity Verification</h3>
+
+      <div class="check-item"><input type="checkbox" id="verifyDOB">Date of Birth verified</div>
+      <div class="check-item"><input type="checkbox" id="verifySSN">Last 4 of SSN verified</div>
+      <div class="check-item"><input type="checkbox" id="verifyAddress">Current address confirmed</div>
+      <div class="check-item"><input type="checkbox" id="verifyPhone">Phone number confirmed</div>
+      <div class="check-item"><input type="checkbox" id="verifyAccount">Account number verified</div>
+
+      <div style="margin-top: 24px; padding: 16px; background: var(--primary-light); border-radius: var(--radius);">
+        <strong style="color: var(--primary-dark);">Security Questions (if needed):</strong>
+        <div style="margin-top: 12px; color: var(--text-muted);">
+          <div style="margin: 8px 0;">• Enrolled creditor name and last 4 of account</div>
+          <div style="margin: 8px 0;">• Monthly program deposit amount</div>
+          <div style="margin: 8px 0;">• Enrollment date</div>
+          <div style="margin: 8px 0;">• Name of assigned debt negotiator</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-success" onclick="verificationComplete()">Complete Verification</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ------------------------ SCRIPT ------------------------- -->
+<script>
+  /* ----- Tabs ----- */
+  const tabs = document.querySelectorAll(".tab");
+  const contents = document.querySelectorAll(".tab-content");
+
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      tabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+
+      contents.forEach(c => c.classList.remove("active"));
+      document.getElementById(tab.dataset.tab).classList.add("active");
+    });
+  });
+
+  /* ----- Query Params ----- */
+  const qp = new URLSearchParams(window.location.search);
+
+  function getQP(...keys) {
+    for (let k of keys) {
+      const v = qp.get(k);
+      if (v && v.trim() !== "") return v;
+    }
+    return "";
+  }
+
+  function cleanPhone(input="") {
+    return input.replace(/[\[\]\(\)]/g,"").trim();
+  }
+
+  /* ----- Defaults ----- */
+  const defaults = {
+    firstName: "Michael",
+    lastName: "Thompson",
+    dob: "1985-06-18",
+    accountNumber: "ACH-728491",
+    phone: "(555) 847-2910",
+    email: "michael.thompson@email.com",
+    address: "1523 Maple Drive",
+    city: "Phoenix",
+    state: "AZ",
+    zip: "85014",
+    ssn: "****5832",
+    programStatus: "Active - On Track",
+    totalDebt: "$30,627.84",
+    progEnrolledDebt: "$30,627.84",
+    progMonthlyDeposit: "$520.00",
+    progLength: "36-48 months",
+    progTotalCost: "$21,438.48",
+    progSavings: "$9,189.36 🎉",
+    enrollmentDate: "October 15, 2025",
+    negotiator: "Sarah Martinez",
+    accountsSettled: "0 of 4",
+    nextDeposit: "March 25, 2026",
+    dedicatedBalance: "$2,600.00"
+  };
+
+  function setField(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.value = val;
+  }
+
+  function setText(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.innerText = val;
+  }
+
+  /* ----- Field Mapping ----- */
+  setField("firstName", getQP("firstName", "fname", "first") || defaults.firstName);
+  setField("lastName", getQP("lastName", "lname", "last") || defaults.lastName);
+  setField("dob", getQP("dob", "DOB", "birthDate") || defaults.dob);
+  setField("accountNumber", getQP("accountNumber", "accountNum", "memberID") || defaults.accountNumber);
+  setField("phone", cleanPhone(getQP("phone", "phoneNumber", "mobile")) || defaults.phone);
+  setField("email", getQP("email", "emailAddress") || defaults.email);
+  setField("address", getQP("address", "street", "address1") || defaults.address);
+  setField("city", getQP("city") || defaults.city);
+  setField("state", getQP("state") || defaults.state);
+  setField("zip", getQP("zip", "zipCode", "postalCode") || defaults.zip);
+  setField("ssn", getQP("ssn", "last4") || defaults.ssn);
+  setField("programStatus", getQP("status", "programStatus") || defaults.programStatus);
+
+  /* Program Details */
+  setText("totalDebt", getQP("totalDebt") || defaults.totalDebt);
+  setText("progEnrolledDebt", getQP("enrolledDebt") || defaults.progEnrolledDebt);
+  setText("progMonthlyDeposit", getQP("monthlyDeposit") || defaults.progMonthlyDeposit);
+  setText("progLength", getQP("programLength") || defaults.progLength);
+  setText("progTotalCost", getQP("totalCost") || defaults.progTotalCost);
+  setText("progSavings", getQP("savings") || defaults.progSavings);
+  setText("enrollmentDate", getQP("enrollmentDate") || defaults.enrollmentDate);
+  setText("negotiator", getQP("negotiator") || defaults.negotiator);
+  setText("accountsSettled", getQP("accountsSettled") || defaults.accountsSettled);
+  setText("nextDeposit", getQP("nextDeposit") || defaults.nextDeposit);
+  setText("dedicatedBalance", getQP("dedicatedBalance") || defaults.dedicatedBalance);
+
+  /* ----- Supervisor Action Card Toggle ----- */
+  function toggleSupervisorCard() {
+    const card = document.getElementById("supervisorCard");
+    card.style.display = (card.style.display === "block") ? "none" : "block";
+  }
+  window.toggleSupervisorCard = toggleSupervisorCard;
+
+  /* ----- Toast System ----- */
+  function showToast(text) {
+    const container = document.getElementById("toastContainer");
+
+    const toast = document.createElement("div");
+    toast.className = "toast";
+    toast.innerText = text + " ✓";
+
+    container.appendChild(toast);
+
+    setTimeout(() => toast.classList.add("show"), 10);
+    setTimeout(() => {
+      toast.classList.remove("show");
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  }
+  window.showToast = showToast;
+
+  /* ----- Supervisor Option Clicks ----- */
+  document.querySelectorAll(".supervisor-option").forEach(option => {
+    option.addEventListener("click", () => {
+      const msg = option.innerText.trim();
+      document.getElementById("supervisorCard").style.display = "none";
+      showToast(msg);
+    });
+  });
+
+  /* ----- Save Notes ----- */
+  function saveNotes() {
+    const notes = document.getElementById("memberNotes").value;
+    if (notes.trim()) {
+      showToast("Member notes saved successfully");
+      document.getElementById("memberNotes").value = "";
+    } else {
+      showToast("Please enter notes before saving");
+    }
+  }
+  window.saveNotes = saveNotes;
+
+  /* ----- Verification Complete ----- */
+  function verificationComplete() {
+    const checks = ["verifyDOB", "verifySSN", "verifyAddress", "verifyPhone", "verifyAccount"];
+    const allChecked = checks.every(id => document.getElementById(id).checked);
+    
+    if (allChecked) {
+      showToast("Identity verification complete");
+    } else {
+      showToast("Please complete all verification steps");
+    }
+  }
+  window.verificationComplete = verificationComplete;
+
+  /* ----- Theme Overrides ----- */
+  const primaryColor = getQP("primaryColor", "brandColor");
+  const bgColor = getQP("bgColor", "backgroundColor");
+  const headerColor = getQP("headerColor");
+
+  if (bgColor) document.body.style.backgroundColor = bgColor;
+  if (headerColor) document.querySelector(".header").style.background = headerColor;
+  if (primaryColor) {
+    document.documentElement.style.setProperty('--primary', primaryColor);
+  }
+</script>
+
+</body>
+</html>
